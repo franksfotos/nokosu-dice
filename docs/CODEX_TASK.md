@@ -1,20 +1,22 @@
-# Copy/paste this into a fresh Codex task
+# Codex task — test and refine the live WebP prototype
 
-You are working in the existing repository `franksfotos/nokosu-dice`.
+Repository: `franksfotos/nokosu-dice`. First inspect root `index.html`, `AGENTS.md`, `assets/README.md` and the design/UX/rules notes in `docs/`.
 
-First inspect `index.html` and read `AGENTS.md` plus every file in `docs/`. The live project is a working mobile-first HTML/CSS/JS interaction prototype, not a rules-complete game. Preserve its layout and tested touch feel.
+**What is already done (29 Oct 2026):**
+- GitHub Pages entry point: `index.html`.
+- All **40 image-generated WebP card fronts** and one WebP card back are checked in under `assets/cards/`.
+- **29 WebP dice** under `assets/dice/`; `yellow-4.svg` is used as a deliberate fallback because its WebP was empty.
+- Cards/dice are now referenced as actual image assets in the fan, selection zoom, trick and opponents' displays. Old SVG variations remain in the repository but aren't the preferred card visuals.
+- No full game engine or multiplayer is implemented; opponent turns are simulated.
 
-**Current task:** prepare the visual asset pipeline and integrate the approved underwater-themed card design while improving dice presentation.
+**Next task — improve and verify, do NOT rewrite:**
+1. Run the current site locally and visually inspect it at 320/375/390px portrait and 768/1024px landscape.
+2. Ensure 10 overlapping, almost-square WebP cards remain **readable and easy to select**. Fix fan geometry only when needed, preserving the already appreciated touch behaviour.
+3. Confirm opponent card fronts never leak, up to 5 dice are visible per player, and tap selection/confirmation/undo/zoom works.
+4. Produce a real, nonempty `assets/dice/yellow-4.webp` from the existing SVG, then switch `dieAsset()` back to a uniform WebP path.
+5. Confirm the selected die is visually distinguishable at small sizes, with CSS glow and accessible labels.
+6. Keep layout safe from iOS browser back gestures and not dependent on hover.
+7. Optionally explore a true small glTF/GLB 3D die with six correct 1–6 faces, but keep a fast 2D fallback. Absolutely **no ornamentation or fold tabs** on dice.
+8. Commit tested changes and summarize deviations and remaining UX issues.
 
-Requirements:
-1. The local player's cards are face-up: values 0–7 across blue, red, yellow, purple and green, with up to 10 in a readable fan. Opponents show *only* their visible dice and a face-down card count; 3–5 players total. Up to five dice per player.
-2. Cards can keep seashell/underwater ornamentation; big readable numbers. Keep the selected-card lift and the zoomed selection view on small phones.
-3. Dice are DIFFERENT: no underwater ornaments, no seashells, no glue tabs, no oriented decorations. Use a clean uniform rounded die, correct pips for faces 1–6, correct opposite pairs (1/6, 2/5, 3/4), and a clear chosen/top-face value. It should read naturally at any rotation. State glow is a CSS/WebGL effect, not part of the texture.
-4. Keep one-card-OR-one-die selection and confirm; normally the final die stays. No accidental browser-back gesture conflicts.
-5. Use optimized reusable assets, not huge inline bitmaps or duplicated decorative elements. Prefer SVG/WebP 2D fallback; optional lightweight GLB for big interactive views. Support users with reduced motion and narrow screens.
-6. Keep GitHub Pages working via root `index.html`. Don't introduce framework/build complexity unless justified.
-7. Do not pretend opponent turns, following-suit or scoring are rule-complete. They are simulated until a separate rules-engine phase.
-
-**Deliverables:** a concise implementation plan, actual maintainable code and assets, screenshots at 320/390 px phone and 1024 px tablet, tested selection/undo flows, and a short summary of remaining gaps. Start with a small, verifiable implementation slice rather than rewriting the app.
-
-Reference art was generated during the ChatGPT design conversation. If the `assets/raw/` image files aren't present, do NOT invent them or scrape copyrighted game artwork: use the design brief and create original scalable graphics or ask for the supplied reference files. Asset filenames/paths are specified in `docs/ASSET_SPEC.md`.
+Do not add an unnecessary framework/backend or claim full Nokosu Dice gameplay. Retain GitHub Pages deployment through root `index.html`.
