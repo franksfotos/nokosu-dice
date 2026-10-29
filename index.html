@@ -74,7 +74,7 @@ const $=id=>document.getElementById(id);let state,history=[],toastTimer;
 const positions={1:[[2,2]],2:[[1,1],[3,3]],3:[[1,1],[2,2],[3,3]],4:[[1,1],[1,3],[3,1],[3,3]],5:[[1,1],[1,3],[2,2],[3,1],[3,3]],6:[[1,1],[1,3],[2,2],[3,1],[3,3],[2,1]]};
 const facePips=(num)=>((positions[num]||positions[1]).map(([r,c])=>'<span class="pip" style="grid-row:'+r+';grid-column:'+c+'"></span>').join(''));
 function cardAsset(c){return 'assets/cards/'+c.color+'-'+c.value+'.webp'}
-function dieAsset(c){return 'assets/dice/'+c.color+'-'+c.value+'.webp'}
+function dieAsset(c){return c.color==='yellow'&&c.value===4?'assets/dice/yellow-4.svg':'assets/dice/'+c.color+'-'+c.value+'.webp'}
 function cardImg(c,cls='card-sprite'){return '<img class="'+cls+'" src="'+cardAsset(c)+'" alt="" loading="eager" draggable="false">'}
 function dieMarkup(obj,size){if(!obj)return '<span class="empty-die" style="--ds:'+size+'px" aria-hidden="true"></span>';return '<span class="die-wrap asset-die" style="--ds:'+size+'px" role="img" aria-label="'+colors[obj.color].name+' '+obj.value+'">'+ '<img class="die-sprite" src="'+dieAsset(obj)+'" alt="" loading="eager" draggable="false">' + '</span>'}
 function art(){return '<svg class="card-art" viewBox="0 0 90 105" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 52Q25 13 66 45T110 35M-7 68Q23 37 65 66T110 60" stroke="white" stroke-width="2"/><path d="M3 108Q17 73 11 58M17 108Q31 83 26 72M34 108Q26 68 47 56M72 108Q61 73 68 59M80 108Q93 75 89 57" stroke="white" stroke-width="4" stroke-linecap="round"/><circle cx="68" cy="35" r="3" fill="white"/><circle cx="76" cy="25" r="2" fill="white"/></svg>'}
