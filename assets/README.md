@@ -1,12 +1,7 @@
-# Art assets
+# Nokosu Dice — integrated SVG assets
 
-The currently deployed `index.html` is a self-contained CSS/JS demo. The generated concept images from the ChatGPT design session have **not** yet been checked into the repository as production assets.
+This directory contains 40 ocean-styled SVG card fronts, one ocean-themed card back, and 30 clean unornamented dice faces. The assets are referenced from `index.html`, with a text fallback if an image fails to load. The existing card fan, zoom selection, undo and player switch remain unchanged.
 
-## Target folders
-- `assets/cards/`: 40 card faces + one back, ideally individual SVG/WebP images.
-- `assets/dice/`: clean, **unornamented**, correct dice faces as 2D assets; optional `.glb` for 3D.
-- `assets/raw/`: optional original design reference images for visual guidance only.
+**Important:** These files are lightweight original SVG renditions of the approved card concept, **not** the exact image-generated WebP crops from the local ZIP. The supplied WebP files cannot be directly transferred as binary by the currently connected GitHub interface. Those WebP assets can replace the SVGs later.
 
-Note: prior dice concept images had shells/ornaments and fold tabs. Those were REJECTED as the direction for production dice; do not copy those artifacts into the actual die geometry or textures.
-
-Read `docs/ASSET_SPEC.md` and `docs/CODEX_TASK.md`.
+Dice SVGs show conventional pips 1–6 and no decoration, glue tabs, or rotated motifs. A future true 3D GLB die is a separate implementation step.

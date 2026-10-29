@@ -26,6 +26,19 @@
 @media(max-width:360px){.game{padding-left:max(15px,env(safe-area-inset-left));padding-right:max(15px,env(safe-area-inset-right))}.brand{font-size:16px}.brand-mark{width:25px;height:25px;font-size:15px}.round{font-size:10px;padding:6px 7px}.seat{padding:6px 6px 5px}.seat-dice .die-wrap,.seat-dice .empty-die{--ds:20px}.seat-dice{gap:1px}.seat-name{font-size:11px}.seat-count{gap:2px;font-size:10px}.fan{--card-w:60px;--card-h:102px;height:125px}.fan-card .num{font-size:21px;left:6px}.arena{height:137px}.play{padding:0 13px}}
 @media(max-height:720px) and (max-width:759px){.game{padding-top:calc(7px + env(safe-area-inset-top))}.subbar{margin:5px 0 6px}.seat{padding-top:6px;padding-bottom:5px}.seat-dice{margin-top:4px}.arena{height:132px;margin:7px 0}.me{padding:5px 10px}.me-header{margin-bottom:2px}.hand-area{margin-top:5px}.fan{height:121px;--card-h:102px}.action-area{padding-top:6px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Scalable original SVG game art: CSS owns glow and touch geometry */
+.fan-card.art-asset,.zoom-card.art-asset,.played-card.art-asset{background:linear-gradient(145deg,var(--card-light),var(--card-mid),var(--card-deep));position:relative;overflow:hidden;padding:0}
+.fan-card.art-asset .asset-img,.zoom-card.art-asset .asset-img,.played-card.art-asset .asset-img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;pointer-events:none}
+.art-asset .asset-img[hidden],.die-svg img[hidden],.art-asset .asset-fallback[hidden],.die-svg .die-fallback[hidden]{display:none}
+.art-asset .asset-fallback{position:absolute;top:8%;left:13%;color:white;font-size:clamp(21px,5.7vw,37px);font-weight:950;text-shadow:0 2px 5px #000a}
+.cardback-stack i{background:#0e62a5 url('assets/cards/back.svg') center/cover no-repeat}
+.die-svg img{width:100%;height:100%;display:block;object-fit:contain;pointer-events:none}
+.die-svg{filter:drop-shadow(0 3px 3px #001a3bad)}
+.die-svg .die-fallback{color:white;font-weight:900}
+.dice-choice.selected .die-svg{filter:drop-shadow(0 0 5px #a5faff) drop-shadow(0 0 8px #44d3ff)}
+.zoom-card.art-asset{font-size:0}
+@media(prefers-reduced-motion:reduce){.art-asset,.die-svg{transition:none;animation:none}}
 </style>
 </head>
 <body>
@@ -52,7 +65,9 @@ const people=[{name:'Anna',tone:['#ffe5c8','#c87886'],dice:[['red',3],['red',6],
 const $=id=>document.getElementById(id);let state,history=[],toastTimer;
 const positions={1:[[2,2]],2:[[1,1],[3,3]],3:[[1,1],[2,2],[3,3]],4:[[1,1],[1,3],[3,1],[3,3]],5:[[1,1],[1,3],[2,2],[3,1],[3,3]],6:[[1,1],[1,3],[2,2],[3,1],[3,3],[2,1]]};
 const facePips=(num)=>((positions[num]||positions[1]).map(([r,c])=>'<span class="pip" style="grid-row:'+r+';grid-column:'+c+'"></span>').join(''));
-function dieMarkup(obj,size){if(!obj)return '<span class="empty-die" style="--ds:'+size+'px" aria-hidden="true"></span>';return '<span class="die-wrap" style="--ds:'+size+'px" role="img" aria-label="'+colors[obj.color].name+' '+obj.value+'"><span class="die-cube '+obj.color+'"><span class="die-face die-front">'+facePips(obj.value)+'</span><span class="die-face die-top">'+facePips(2)+'</span><span class="die-face die-right">'+facePips(3)+'</span></span></span>'}
+function dieMarkup(obj,size){if(!obj)return '<span class="empty-die" style="--ds:'+size+'px" aria-hidden="true"></span>';return '<span class="die-wrap die-svg" style="--ds:'+size+'px" role="img" aria-label="'+colors[obj.color].name+' '+obj.value+'"><img src="assets/dice/'+obj.color+'-'+obj.value+'.svg" loading="lazy" alt="" draggable="false"><span class="die-fallback" hidden>'+obj.value+'</span></span>'}
+function cardAsset(c){return 'assets/cards/'+c.color+'-'+c.value+'.svg'}
+function assetMarkup(c){return '<img class="asset-img" loading="lazy" alt="" draggable="false" src="'+cardAsset(c)+'"><span class="asset-fallback" hidden>'+c.value+'</span>'}
 function art(){return '<svg class="card-art" viewBox="0 0 90 105" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 52Q25 13 66 45T110 35M-7 68Q23 37 65 66T110 60" stroke="white" stroke-width="2"/><path d="M3 108Q17 73 11 58M17 108Q31 83 26 72M34 108Q26 68 47 56M72 108Q61 73 68 59M80 108Q93 75 89 57" stroke="white" stroke-width="4" stroke-linecap="round"/><circle cx="68" cy="35" r="3" fill="white"/><circle cx="76" cy="25" r="2" fill="white"/></svg>'}
 function cardStyle(c){let x=colors[c.color];return '--card-light:'+x.light+';--card-mid:'+x.mid+';--card-deep:'+x.deep}
 function initial(players=5){state={players,hand:startCards.map((x,i)=>({id:'c'+i,color:x[0],value:x[1]})),dice:startDice.map((x,i)=>({id:'d'+i,color:x[0],value:x[1]})),opponents:people.slice(0,players-1).map((p,pi)=>({name:p.name,tone:p.tone,count:10,dice:p.dice.map((d,i)=>({id:'e'+pi+'-'+i,color:d[0],value:d[1]}))})),selected:null,round:1,trick:1,won:0,played:[]};history=[];render()}
@@ -61,12 +76,12 @@ function render(){
  document.querySelectorAll('[data-players]').forEach(b=>{let yes=+b.dataset.players===state.players;b.classList.toggle('active',yes);b.setAttribute('aria-pressed',yes)});
  $('opponents').innerHTML=state.opponents.map((p,i)=>'<div class="seat '+(i===0?'active':'')+'" data-seat="'+i+'" style="--portrait-light:'+p.tone[0]+';--portrait-dark:'+p.tone[1]+'"><div class="seat-top"><span class="portrait">'+p.name[0]+'</span><span class="seat-name">'+p.name+'</span><span class="seat-count"><span class="cardback-stack" aria-hidden="true"><i></i><i></i><i></i></span><span aria-label="'+p.count+' verdeckte Karten">'+p.count+'</span></span></div><div class="seat-dice">'+Array.from({length:5},(_,j)=>dieMarkup(p.dice[j],25)).join('')+'</div></div>').join('');
  $('trump-token').innerHTML=dieMarkup({color:'yellow',value:4},21);
- $('trick').innerHTML=state.played.length?state.played.map(p=>'<div class="trick-part">'+(p.kind==='card'?'<div class="played-card" style="'+cardStyle(p)+'">'+p.value+'</div>':dieMarkup(p,42))+'<small>'+p.owner+'</small></div>').join(''):'<div class="trick-placeholder">✦ Hier entsteht der nächste Stich ✦</div>';
+ $('trick').innerHTML=state.played.length?state.played.map(p=>'<div class="trick-part">'+(p.kind==='card'?'<div class="played-card art-asset" style="'+cardStyle(p)+'" role="img" aria-label="'+colors[p.color].name+' '+p.value+'">'+assetMarkup(p)+'</div>':dieMarkup(p,42))+'<small>'+p.owner+'</small></div>').join(''):'<div class="trick-placeholder">✦ Hier entsteht der nächste Stich ✦</div>';
  $('trick-caption').textContent=state.played.length?'Simulierter Stich · dein letzter Zug links':'Karte oder Würfel auswählen';
  $('counts').textContent=state.hand.length+' Karten · '+state.dice.length+' Würfel';$('score').textContent=state.won+' Stiche';
  $('my-dice').innerHTML=Array.from({length:5},(_,j)=>{let d=state.dice[j];return d?'<button type="button" class="dice-choice '+(state.selected===d.id?'selected':'')+'" data-pick="'+d.id+'" aria-label="Würfel '+colors[d.color].name+' '+d.value+' wählen" aria-pressed="'+(state.selected===d.id)+'" '+(state.dice.length===1?'disabled title="Letzter Würfel bleibt"':'')+'>'+dieMarkup(d,37)+'</button>':'<span class="dice-choice" aria-hidden="true">'+dieMarkup(null,35)+'</span>'}).join('');
  $('hand-count').textContent=state.hand.length+' Karten';let total=state.hand.length;
- $('hand').innerHTML=state.hand.map((c,i)=>{let u=total===1?.5:i/(total-1);let rotation=(u-.5)*19;let arc=Math.round(Math.abs(u-.5)*20);return '<button class="fan-card '+c.color+' '+(state.selected===c.id?'selected':'')+'" type="button" data-pick="'+c.id+'" aria-pressed="'+(state.selected===c.id)+'" aria-label="Karte '+colors[c.color].name+' '+c.value+'" style="'+cardStyle(c)+';--p:'+u+';--z-index:'+(i+1)+';--rotation:'+rotation+'deg;--arc:'+arc+'px"><span class="num">'+c.value+'</span><span class="little"></span>'+art()+'</button>'}).join('');
+ $('hand').innerHTML=state.hand.map((c,i)=>{let u=total===1?.5:i/(total-1);let rotation=(u-.5)*19;let arc=Math.round(Math.abs(u-.5)*20);return '<button class="fan-card art-asset '+c.color+' '+(state.selected===c.id?'selected':'')+'" type="button" data-pick="'+c.id+'" aria-pressed="'+(state.selected===c.id)+'" aria-label="Karte '+colors[c.color].name+' '+c.value+'" style="'+cardStyle(c)+';--p:'+u+';--z-index:'+(i+1)+';--rotation:'+rotation+'deg;--arc:'+arc+'px">'+assetMarkup(c)+'</button>'}).join('');
  let selected=state.hand.concat(state.dice).find(c=>c.id===state.selected);$('selection').innerHTML=selected?'<strong>'+(selected.id[0]==='c'?'Karte':'Würfel')+' '+colors[selected.color].name+' '+selected.value+' gewählt</strong><span class="selection-sub">Noch einmal tippen zum Abwählen</span>':'<strong>Du bist am Zug</strong><span class="selection-sub">Karte oder Würfel antippen</span>';
  $('play').disabled=!selected;$('undo').disabled=!history.length;
 }
@@ -77,12 +92,13 @@ function play(){let card=state.hand.find(c=>c.id===state.selected);let d=card||s
  state.trick++;state.selected=null;render();toast('Zug ausgespielt · nächsten Zug testen');if('vibrate' in navigator)try{navigator.vibrate(15)}catch(e){}
 }
 function toast(text){document.querySelector('.toast')?.remove();const n=document.createElement('div');n.className='toast';n.textContent=text;document.body.append(n);clearTimeout(toastTimer);toastTimer=setTimeout(()=>n.remove(),2400)}
-function openZoom(){document.body.style.overflow='hidden';const list=$('zoom-cards');list.innerHTML=state.hand.map(c=>'<button type="button" class="zoom-card '+(state.selected===c.id?'chosen':'')+'" style="'+cardStyle(c)+'" data-zoom-pick="'+c.id+'" aria-label="Karte '+colors[c.color].name+' '+c.value+' wählen">'+c.value+'</button>').join('');$('modal').hidden=false;$('close').focus()}
+function openZoom(){document.body.style.overflow='hidden';const list=$('zoom-cards');list.innerHTML=state.hand.map(c=>'<button type="button" class="zoom-card art-asset '+(state.selected===c.id?'chosen':'')+'" style="'+cardStyle(c)+'" data-zoom-pick="'+c.id+'" aria-label="Karte '+colors[c.color].name+' '+c.value+' wählen">'+assetMarkup(c)+'</button>').join('');$('modal').hidden=false;$('close').focus()}
 function closeZoom(){document.body.style.overflow='';$('modal').hidden=true;$('zoom-button').focus()}
 $('play').addEventListener('click',play);$('fresh').addEventListener('click',()=>{initial(state.players);toast('Neue Testhand')});$('restart').addEventListener('click',()=>{initial(state.players);toast('Neue Hand gestartet')});$('undo').addEventListener('click',()=>{if(!history.length)return;state=JSON.parse(history.pop());render();toast('Zug zurückgenommen')});$('info').addEventListener('click',()=>toast('UX-Demo ohne vollständige Regeln: pro Zug Karte ODER Würfel. Letzter Würfel bleibt.'));
 $('zoom-button').addEventListener('click',openZoom);$('close').addEventListener('click',closeZoom);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeZoom()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('modal').hidden)closeZoom()});
 $('zoom-cards').addEventListener('click',e=>{let b=e.target.closest('[data-zoom-pick]');if(!b)return;pick(b.dataset.zoomPick);closeZoom()});
 $('game').addEventListener('click',e=>{let b=e.target.closest('[data-pick],[data-players]');if(!b)return;if(b.dataset.pick)pick(b.dataset.pick);else if(b.dataset.players){initial(+b.dataset.players);toast(b.dataset.players+' Spieler · neue Testhand')}});
+document.addEventListener('error',e=>{let x=e.target;if(x && x.matches && (x.matches('img.asset-img') || x.matches('.die-svg img'))){x.hidden=true;let next=x.nextElementSibling;if(next)next.hidden=false;}},true);
 initial(5);
 })();
 </script>

@@ -1,0 +1,31 @@
+{
+  "version": "1.0-svg",
+  "colors": [
+    "blue",
+    "red",
+    "yellow",
+    "purple",
+    "green"
+  ],
+  "cardValues": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "dieValues": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "cards": "assets/cards/{color}-{value}.svg",
+  "back": "assets/cards/back.svg",
+  "dice": "assets/dice/{color}-{value}.svg"
+}
